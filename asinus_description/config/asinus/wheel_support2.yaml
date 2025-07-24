@@ -1,0 +1,19 @@
+# Wheel Support Configuration
+number: 2
+
+mass: 0.2               # Support mass in Kg
+x_offset: -0.022         # X offset from base center
+y_offset: 0.3125          # Y offset from base center  
+z_offset: 0.0125          # Z offset from base center
+
+# Support dimensions
+length: 0.225            # Length of support structure
+width: 0.015            # Width of support structure
+height: 0.025           # Height of support structure
+
+# Inertia properties (calculated for box)
+ixx: 0.0001             # Moment of inertia about x-axis
+iyy: 0.0001             # Moment of inertia about y-axis
+izz: 0.0001             # Moment of inertia about z-axis
+
+mesh: '' # Name of the mesh files. Leave it empty ('') to have a white base.

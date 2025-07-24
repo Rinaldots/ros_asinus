@@ -1,0 +1,16 @@
+# Motor Hub Configuration - Integrated wheel and motor unit
+# Total mass combining wheel and motor
+number: 2
+
+total_mass: 0.5        # Total mass in Kg (wheel + motor)
+
+# Wheel properties
+wheel_radius: 0.079    # Wheel radius in m
+wheel_length: 0.056     # Wheel length in m, considering it as a cylinder
+wheel_mesh: ''          # Leave it empty ('') to have a primitive cylinder wheel
+wheel_scale: ''
+
+# Positioning offsets
+x_offset: 0.085      # X offset from base center in m
+y_offset: -0.3135    # Y offset from base center in m  
+z_offset: -0.015       # Z offset from base center in m

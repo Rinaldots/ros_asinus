@@ -1,0 +1,11 @@
+base:
+  mass: 0.8               # Base mass in Kg
+  x_size: 0.0           # Dimension in x axis
+  y_size: 0.0            # Dimension in y axis
+  z_size: 0.0           # Dimension in z axis
+
+  height: 0.495
+  width: 0.40
+  length: 0.60           # Dimension in z axis
+
+  mesh: 'frame.stl'  # Name of the mesh files. Leave it empty ('') to have a white base.
