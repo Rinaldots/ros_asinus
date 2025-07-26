@@ -2,6 +2,14 @@ cmake_minimum_required(VERSION 3.8)
 
 project(asinus_gz)
 
+# Suppress catkin-related warnings for ROS 2 workspace
+if(DEFINED CATKIN_INSTALL_INTO_PREFIX_ROOT)
+  unset(CATKIN_INSTALL_INTO_PREFIX_ROOT CACHE)
+endif()
+if(DEFINED CATKIN_SYMLINK_INSTALL)
+  unset(CATKIN_SYMLINK_INSTALL CACHE)
+endif()
+
 find_package(ament_cmake REQUIRED)
 
 if(BUILD_TESTING)

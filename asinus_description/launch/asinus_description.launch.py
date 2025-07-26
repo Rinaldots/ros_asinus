@@ -5,6 +5,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+from launch.conditions import IfCondition
 from launch_ros.parameter_descriptions import ParameterValue
 
 def generate_launch_description():
@@ -19,6 +20,12 @@ def generate_launch_description():
     from launch.substitutions import Command, PathJoinSubstitution
     from launch_ros.substitutions import FindPackageShare
 
+    gui = LaunchConfiguration('gui', default='true')  # Default to true for GUI
+
+    rviz_config_file = PathJoinSubstitution(
+        [FindPackageShare('asinus_description'), "/rviz", "diffbot_view.rviz"]
+    )
+    
     robot_description_content = Command([
         'xacro ',
         PathJoinSubstitution([
@@ -29,6 +36,7 @@ def generate_launch_description():
         ' yaml_config_dir:=', os.path.join(pkg_asinus_description, 'config', robot_name_for_config), # Use a consistent name for config path
         ' frame_prefix_arg:=', namespace
     ])
+
     params = {
         'robot_description': ParameterValue(robot_description_content, value_type=str),
         'prefix': "", # Set to empty string as link names in URDF will be prefixed
@@ -43,10 +51,20 @@ def generate_launch_description():
                 remappings={('/robot_description', 'robot_description'),}
     )
 
-    # NOTE: Joint state publisher removed as it conflicts with motor hub controllers
-    # The motor hub joints are continuous and should be controlled by the hardware interface
-    # or diff_drive_controller, not reset to zero position by joint_state_publisher
+    joint_state_publisher_node = Node(
+        package="joint_state_publisher_gui",
+        executable="joint_state_publisher_gui",
+        condition=IfCondition(gui),
+    )
 
+    rviz_node = Node(
+        package="rviz2",
+        executable="rviz2",
+        name="rviz2",
+        output="log",
+        arguments=["-d", rviz_config_file],
+        condition=IfCondition(gui),
+    )
     return LaunchDescription([
         namespace_arg,
         rsp,

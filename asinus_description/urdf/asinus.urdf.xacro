@@ -10,6 +10,7 @@
 
   <xacro:include filename="$(find ${package_name})/urdf/include/common_macros.urdf.xacro" />
   <xacro:include filename="$(find ${package_name})/urdf/include/asinus_caster_macro.urdf.xacro" />
+  <xacro:include filename="$(find ${package_name})/urdf/include/ros2_control_macro.urdf.xacro" />
 
   <xacro:arg name="yaml_config_dir" default="$(find ${package_name})/config/${robot_name}" />
 
@@ -104,37 +105,6 @@
                            wheel_support_end_props="${wheel_support_end2_props}" />
 
 
-  <!-- ROS2 Control for Motor Hubs -->
-  <ros2_control name="AsinusRealHardware" type="system">
-    <hardware>
-      <plugin>asinus_control/AsinusHardwareInterface</plugin>
-      <param name="encoder_topic_name">/asinus/encoders</param>
-      <param name="ticks_per_wheel_revolution">16.0</param>
-      <param name="left_encoder_data_index">1</param>
-      <param name="right_encoder_data_index">0</param>
-    </hardware>
-    <joint name="left1_motor_hub_joint">
-      <command_interface name="velocity"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="right1_motor_hub_joint">
-      <command_interface name="velocity"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="left2_motor_hub_joint">
-      <command_interface name="velocity"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="right2_motor_hub_joint">
-      <command_interface name="velocity"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-  </ros2_control>
-
 
   <!-- Odometria link -->
   <link name="odom_link"/>
@@ -152,5 +122,7 @@
     <origin xyz="-0.033 -0.010 0.02" rpy="3.1416 0 0"/>
   </joint>
 
+  <!-- ROS2 Control -->
+  <xacro:ros2_control_macro robot_prefix="" />
 
 </robot>

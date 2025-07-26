@@ -2,10 +2,10 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 <!--
   Xacro macros were inspired on https://github.com/ros-mobi          <xacro:if value="${scale != '' }" >
-              <mesh filename="model://$(find ${package_name})/meshes/${robot_name}/${wheel_props['wheel']['mesh']}" scale="${scale}"/>
+              <mesh filename="package://$(find ${package_name})/meshes/${robot_name}/${wheel_props['wheel']['mesh']}" scale="${scale}"/>
             </xacro:if>
             <xacro:if value="${scale == '' }" >
-              <mesh filename="model://$(find ${package_name})/meshes/${robot_name}/${wheel_props['wheel']['mesh']}" />
+              <mesh filename="package://$(find ${package_name})/meshes/${robot_name}/${wheel_props['wheel']['mesh']}" />
             </xacro:if>ots/mobile_robot_description/wiki/
 -->
 <!-- ===================== Caster xacro =========================================
@@ -36,10 +36,10 @@
           <origin xyz="0 0 ${-wheel_props['base']['size']['z']/2.0}" rpy="0 0 0" />
           <geometry>
             <xacro:if value="${scale != '' }" >
-              <mesh filename="model:/$(find ${package_name})/meshes/${robot_name}/${wheel_props['base']['mesh']}" scale="${scale}"/>
+              <mesh filename="package://${package_name}/meshes/${robot_name}/${wheel_props['base']['mesh']}" scale="${scale}"/>
             </xacro:if>
             <xacro:if value="${scale == '' }" >
-              <mesh filename="model:/$(find ${package_name})/meshes/${robot_name}/${wheel_props['base']['mesh']}" />
+              <mesh filename="package://${package_name}/meshes/${robot_name}/${wheel_props['base']['mesh']}" />
             </xacro:if>
           </geometry>
           <material name="silver"/>
@@ -84,10 +84,10 @@
           <origin xyz="0 0 ${-wheel_props['hub']['size']['z']/2.0}" rpy="0 0 0" />
           <geometry>
             <xacro:if value="${scale != '' }" >
-              <mesh filename="model:/$(find ${package_name})/meshes/${robot_name}/${wheel_props['hub']['mesh']}" scale="${scale}"/>
+              <mesh filename="package://${package_name}/meshes/${robot_name}/${wheel_props['hub']['mesh']}" scale="${scale}"/>
             </xacro:if>
             <xacro:if value="${scale == '' }" >
-              <mesh filename="model:/$(find ${package_name})/meshes/${robot_name}/${wheel_props['hub']['mesh']}" />
+              <mesh filename="package://${package_name}/meshes/${robot_name}/${wheel_props['hub']['mesh']}" />
             </xacro:if>
           </geometry>
           <material name="silver"/>
@@ -142,10 +142,10 @@
           <origin xyz="0 0 0" rpy="0 0 0" />
           <geometry>
             <xacro:if value="${scale != '' }" >
-              <mesh filename="model:/$(find ${package_name})/meshes/${robot_name}/${wheel_props['wheel']['mesh']}" scale="${scale}"/>
+              <mesh filename="package://${package_name}/meshes/${robot_name}/${wheel_props['wheel']['mesh']}" scale="${scale}"/>
             </xacro:if>
             <xacro:if value="${scale == '' }" >
-              <mesh filename="model:/$(find ${package_name})/meshes/${robot_name}/${wheel_props['wheel']['mesh']}" />
+              <mesh filename="package://${package_name}/meshes/${robot_name}/${wheel_props['wheel']['mesh']}" />
             </xacro:if>
           </geometry>
           <material name="black"/>

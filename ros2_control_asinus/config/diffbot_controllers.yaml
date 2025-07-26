@@ -1,0 +1,18 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 10
+
+    diffbot_base_controller:
+      type: diff_drive_controller/DiffDriveController
+      ros__parameters:
+        left_wheel_names: ["left1_motor_hub_joint"]
+        right_wheel_names: ["right1_motor_hub_joint"]
+        wheel_separation: 0.4
+        wheel_radius: 0.05
+        use_stamped_vel: false
+        base_frame_id: base_link
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+      ros__parameters:
+        publish_rate: 50.0
