@@ -11,7 +11,8 @@
   <xacro:include filename="$(find ${package_name})/urdf/include/common_macros.urdf.xacro" />
   <xacro:include filename="$(find ${package_name})/urdf/include/asinus_caster_macro.urdf.xacro" />
   <xacro:include filename="$(find ${package_name})/urdf/include/ros2_control_macro.urdf.xacro" />
-
+  <xacro:include filename="$(find ${package_name})/urdf/include/sensors/kinect.urdf.xacro" />
+  <xacro:include filename="$(find ${package_name})/urdf/include/asinus_properties.urdf.xacro" />
   <xacro:arg name="yaml_config_dir" default="$(find ${package_name})/config/${robot_name}" />
 
   <xacro:property name="caster_wheel_yaml" value="$(arg yaml_config_dir)/caster_wheel.yaml" />
@@ -105,7 +106,13 @@
                            wheel_support_end_props="${wheel_support_end2_props}" />
 
 
+  <!-- Kinect Sensor -->
+  <xacro:sensor_kinect parent="base_link" namespace="$(arg frame_prefix_arg)"/>
 
+  <!-- Lidar Sensor - TODO: Implement lidar sensor macros -->
+  <!-- <xacro:asinus_lidar namespace="$(arg frame_prefix_arg)"/>
+  <xacro:sensor_lidar parent="base_link"/> -->
+  
   <!-- Odometria link -->
   <link name="odom_link"/>
   <joint name="odom_joint" type="fixed">

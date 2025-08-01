@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<robot name="sensor_kinect" xmlns:xacro="http://ros.org/wiki/xacro">
+ 
+  <!-- Define pi constant -->
+  <xacro:property name="M_PI" value="3.14159265359"/>
+  <xacro:property name="cam_px" value="-0.087" />
+  <xacro:property name="cam_py" value="-0.0125" />
+	<xacro:property name="cam_pz" value="0.2870" />
+	<xacro:property name="cam_or" value="0" />
+	<xacro:property name="cam_op" value="0" />
+	<xacro:property name="cam_oy" value="0" />
+  <!-- Microsoft Kinect / ASUS Xtion PRO Live for simulation -->
+  <xacro:macro name="asinus_kinect" params="namespace:=''">
+    <gazebo reference="camera_link">
+      <!-- RGB Camera Sensor -->
+      <sensor name="kinect_camera" type="camera">
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <update_rate>30</update_rate>
+        <topic>camera/image_raw</topic>
+        <gz_frame_id>camera_rgb_optical_frame</gz_frame_id>
+        <camera name="kinect_camera">
+          <camera_info_topic>camera/camera_info</camera_info_topic>
+          <horizontal_fov>1.3962634</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.02</near>
+            <far>300</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+      </sensor>
+
+      <!-- Depth Camera Sensor -->
+      <sensor name="kinect_depth" type="depth_camera">
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <update_rate>15</update_rate>
+        <topic>camera/depth/image_raw</topic>
+        <gz_frame_id>camera_depth_optical_frame</gz_frame_id>
+        <depth_camera name="kinect_depth">
+          <camera_info_topic>camera/depth/camera_info</camera_info_topic>
+          <horizontal_fov>1.047</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>FLOAT32</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>10.0</far>
+          </clip>
+        </depth_camera>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+  
+  
+  <!-- Parameterised in part by the values in asinus_properties.urdf.xacro -->
+  <xacro:macro name="sensor_kinect" params="parent namespace:=''">
+    <joint name="camera_rgb_joint" type="fixed">
+      <origin xyz="${cam_px} ${cam_py} ${cam_pz}" rpy="${cam_or} ${cam_op} ${cam_oy}"/>
+      <parent link="${parent}"/>
+      <child link="camera_rgb_frame" />
+    </joint>
+    <link name="camera_rgb_frame"/>
+
+    <joint name="camera_rgb_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+      <parent link="camera_rgb_frame" />
+      <child link="camera_rgb_optical_frame" />
+    </joint>
+    <link name="camera_rgb_optical_frame"/>
+
+    <joint name="camera_joint" type="fixed">
+      <origin xyz="-0.031 ${-cam_py} -0.016" rpy="0 0 0"/>
+      <parent link="camera_rgb_frame"/>
+      <child link="camera_link"/>
+    </joint>  
+      <link name="camera_link">
+      <visual>
+       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+         <mesh filename="package:/$(find asinus_description)/meshes/sensors/kinect.dae"/>
+        </geometry>
+      </visual>
+  	  <collision>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+  	    <geometry>
+  	      <box size="0.07271 0.27794 0.073"/>
+  	    </geometry>
+  	  </collision>
+      <inertial>
+        <mass value="0.564" />
+        <origin xyz="0 0 0" />
+        <inertia ixx="0.003881243" ixy="0.0" ixz="0.0"
+                 iyy="0.000498940" iyz="0.0"
+                 izz="0.003879257" />
+      </inertial>
+    </link>
+
+	<joint name="camera_depth_joint" type="fixed">
+	  <origin xyz="0 ${2 * -cam_py} 0" rpy="0 0 0" />
+	  <parent link="camera_rgb_frame" />
+	  <child link="camera_depth_frame" />
+	</joint>
+	<link name="camera_depth_frame"/>
+
+	<joint name="camera_depth_optical_joint" type="fixed">
+	  <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+	  <parent link="camera_depth_frame" />
+	  <child link="camera_depth_optical_frame" />
+	</joint>
+	<link name="camera_depth_optical_frame"/>
+	
+	<!-- Kinect sensor for simulation -->
+	<xacro:asinus_kinect namespace="${namespace}"/>
+  </xacro:macro>
+</robot>

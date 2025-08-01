@@ -11,25 +11,23 @@ controller_manager:
 
 diffbot_base_controller:
   ros__parameters:
-    left_wheel_names: ["left1_motor_hub_joint"]
-    right_wheel_names: ["right1_motor_hub_joint"]
-    odom_frame_id: "odom"
-    base_frame_id: "base_link"
-    wheel_separation: 0.19
-    wheel_radius: 0.034
-    
+    left_wheel_names: ["left1_motor_hub_joint", "left2_motor_hub_joint"]
+    right_wheel_names: ["right1_motor_hub_joint", "right2_motor_hub_joint"]
+    wheel_separation: 0.567
+    wheel_radius: 0.079
+
     wheel_separation_multiplier: 1.0
     left_wheel_radius_multiplier: 1.0
     right_wheel_radius_multiplier: 1.0
 
     publish_rate: 50.0
-    
-
-    enable_odom_tf: false # Let EKF publish the odom->base_link TF
+    odom_frame_id: "odom"
+    base_frame_id: "base_link"
     pose_covariance_diagonal : [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
     twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
 
     cmd_vel_timeout: 0.5
+    #enable_odom_tf: false # Let EKF publish the odom->base_link TF
 
     linear.x.has_velocity_limits: true
     linear.x.has_acceleration_limits: true

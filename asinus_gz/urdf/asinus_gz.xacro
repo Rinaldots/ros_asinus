@@ -1,72 +1,181 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="asinus">
-  <xacro:arg name="namespace" default="asinus"/> 
+
+  <xacro:property name="package_name" value="asinus_description"/>
+  <xacro:property name="robot_name" value="asinus"/> 
+
+  <xacro:arg name="frame_prefix_arg" default=""/> 
+  <xacro:arg name="namespace" default=""/> 
   <xacro:arg name="use_gazebo_ros_control" default="true"/>
-  <xacro:property name="robot_namespace" value="/$(arg namespace)"/>
+
+  <xacro:property name="processed_prefix" value="$(arg frame_prefix_arg)_" /> 
+  <xacro:property name="robot_namespace" value="/$(arg namespace)"/> 
+
+  <xacro:include filename="$(find ${package_name})/urdf/include/common_macros.urdf.xacro" />
+  <xacro:include filename="$(find ${package_name})/urdf/include/asinus_caster_macro.urdf.xacro" />
+  <xacro:include filename="$(find ${package_name})/urdf/include/ros2_control_macro.urdf.xacro" />
+  <xacro:include filename="$(find ${package_name})/urdf/include/sensors/kinect.urdf.xacro" />
+  <xacro:arg name="yaml_config_dir" default="$(find ${package_name})/config/${robot_name}" />
+
+  <xacro:property name="caster_wheel_yaml" value="$(arg yaml_config_dir)/caster_wheel.yaml" />
+  <xacro:property name="caster_wheel_props" value="${xacro.load_yaml(caster_wheel_yaml)}"/>
+  <xacro:arg name="use_fixed_caster" default="True"/>
+
+  <xacro:property name="motor_hub_yaml" value="$(arg yaml_config_dir)/motor_hub.yaml" />
+  <xacro:property name="motor_hub_props" value="${xacro.load_yaml(motor_hub_yaml)}"/>
+
+  <xacro:property name="motor_hub2_yaml" value="$(arg yaml_config_dir)/motor_hub2.yaml" />
+  <xacro:property name="motor_hub2_props" value="${xacro.load_yaml(motor_hub2_yaml)}"/>
+
+  <xacro:property name="base_yaml" value="$(arg yaml_config_dir)/base.yaml" />
+  <xacro:property name="base_props" value="${xacro.load_yaml(base_yaml)}"/>
+
+  <xacro:property name="wheel_support_yaml" value="$(arg yaml_config_dir)/wheel_support.yaml" />
+  <xacro:property name="wheel_support_props" value="${xacro.load_yaml(wheel_support_yaml)}"/>
+
+  <xacro:property name="wheel_support2_yaml" value="$(arg yaml_config_dir)/wheel_support2.yaml" />
+  <xacro:property name="wheel_support2_props" value="${xacro.load_yaml(wheel_support2_yaml)}"/>
+
+  <xacro:property name="wheel_support_end_yaml" value="$(arg yaml_config_dir)/wheel_support_end.yaml" />
+  <xacro:property name="wheel_support_end_props" value="${xacro.load_yaml(wheel_support_end_yaml)}"/>
+  <xacro:property name="wheel_support_end2_yaml" value="$(arg yaml_config_dir)/wheel_support_end2.yaml" />
+  <xacro:property name="wheel_support_end2_props" value="${xacro.load_yaml(wheel_support_end2_yaml)}"/>
+  <!-- Footprint link -->
+  <xacro:footprint robot_prefix=""
+                   motor_hub_props="${motor_hub_props}" />
+
+  <!-- Base link -->
+  <xacro:base robot_prefix=""
+              link_name="base_link" base_prop="${base_props}" mesh="${base_props['base']['mesh']}" >
+    <origin xyz="0 0 0" rpy="0 0 ${-pi/2}" />
+  </xacro:base>
+
+
+  <!-- Caster Wheel -->
+  <xacro:caster_wheel robot_prefix=""
+                      reflect="-1"
+                      use_fixed="$(arg use_fixed_caster)"
+                      wheel_props="${caster_wheel_props}">
+  </xacro:caster_wheel>
+
+  <!-- Motor Hubs (combined wheel and motor) -->
+  <xacro:motor_hub robot_prefix=""
+               prefix="right" reflect="-1"
+                      motor_hub_props="${motor_hub_props}"
+                      />
+  <xacro:motor_hub robot_prefix=""
+               prefix="left" reflect="1"
+                      motor_hub_props="${motor_hub_props}"
+                      />  
+  <!-- Motor Hubs 2-->
+  <xacro:motor_hub robot_prefix=""
+               prefix="right" reflect="-1"
+                      motor_hub_props="${motor_hub2_props}"
+                      />
+  <xacro:motor_hub robot_prefix=""
+               prefix="left" reflect="1"
+                      motor_hub_props="${motor_hub2_props}"
+                      />
+  <!-- Support Wheel -->
+  <xacro:wheel_support robot_prefix=""
+                      prefix="right" reflect="-1"
+                      wheel_support_props="${wheel_support_props}" />
+                      
+  <xacro:wheel_support robot_prefix=""
+                      prefix="left" reflect="1"
+                      wheel_support_props="${wheel_support_props}" />
+  <!-- Support Wheel 2 -->
+  <xacro:wheel_support robot_prefix=""
+                      prefix="right" reflect="-1"
+                      wheel_support_props="${wheel_support2_props}" />
+
+  <xacro:wheel_support robot_prefix=""
+                      prefix="left" reflect="1"
+                      wheel_support_props="${wheel_support2_props}" />
+  <!-- Support Wheel End -->
+  <xacro:wheel_support_end robot_prefix=""
+                           prefix="right" reflect="-1"
+                           wheel_support_end_props="${wheel_support_end_props}" />
+  <xacro:wheel_support_end robot_prefix=""
+                           prefix="left" reflect="1"
+                           wheel_support_end_props="${wheel_support_end_props}" />
+  <!-- Support Wheel End 2 -->
+  <xacro:wheel_support_end robot_prefix=""
+                           prefix="right" reflect="-1"
+                           wheel_support_end_props="${wheel_support_end2_props}" />
+  <xacro:wheel_support_end robot_prefix=""
+                           prefix="left" reflect="1"
+                           wheel_support_end_props="${wheel_support_end2_props}" />
+
   
-  <xacro:include filename="$(find asinus_description)/urdf/asinus.urdf.xacro"/>
+  <!-- Odometria link -->
+  <link name="odom_link"/>
+  <joint name="odom_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="odom_link"/>
+    <origin xyz="0 0 0" rpy="0 0 3.1416"/>
+  </joint>
+
+  <!-- MPU link -->
+  <link name="mpu_link"/>
+  <joint name="mpu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="mpu_link"/>
+    <origin xyz="-0.033 -0.010 0.02" rpy="3.1416 0 0"/>
+  </joint>
 
    <xacro:if value="$(arg use_gazebo_ros_control)">
-    <ros2_control name="AsinusGazeboHardware" type="system">
+    <ros2_control name="GazeboSimSystem" type="system">
     <hardware>
       <plugin>gz_ros2_control/GazeboSimSystem</plugin>
     </hardware>
     <joint name="left1_motor_hub_joint">
       <command_interface name="velocity">
-        <param name="min">-5</param>
-        <param name="max">5</param>
+        <param name="min">-1</param>
+        <param name="max">1</param>
       </command_interface>
-      <state_interface name="velocity"/>
       <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
     <joint name="left2_motor_hub_joint">
       <command_interface name="velocity">
-        <param name="min">-5</param>
-        <param name="max">5</param>
+        <param name="min">-1</param>
+        <param name="max">1</param>
       </command_interface>
-      <state_interface name="velocity"/>
       <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
     <joint name="right1_motor_hub_joint">
       <command_interface name="velocity">
-        <param name="min">-5</param>
-        <param name="max">5</param>
+        <param name="min">-1</param>
+        <param name="max">1</param>
       </command_interface>
-      <state_interface name="velocity"/>
       <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
     <joint name="right2_motor_hub_joint">
       <command_interface name="velocity">
-        <param name="min">-5</param>
-        <param name="max">5</param>
+        <param name="min">-1</param>
+        <param name="max">1</param>
       </command_interface>
-      <state_interface name="velocity"/>
       <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
   </ros2_control>
-    <gazebo>
-      <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-          <parameters>/home/r1/ws_crawler/install/asinus_control/share/asinus_control/config/asinus_controllers.yaml</parameters>
-          <ros>
-            <namespace>$(arg namespace)</namespace>
-          </ros>
-      </plugin>
-      <plugin name="asinus_joint_state_caster" filename="ignition-gazebo-joint-state-publisher-system">
-      <ros> 
-        <namespace>${robot_namespace}</namespace>  
-        <remapping>~/out:=joint_states</remapping>
-        <remapping>/tf:=tf</remapping>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <ros>
+        <namespace>$(arg namespace)</namespace>
       </ros>
-      <update_rate>30</update_rate>
-      <joint_name>caster_rotation_joint</joint_name>
-      <joint_name>caster_wheel_joint</joint_name>
+      <parameters>$(find ros2_control_asinus)/config/diffbot_controllers.yaml</parameters>
     </plugin>
-    </gazebo>
+  </gazebo>
   </xacro:if>
 
   <xacro:unless value="$(arg use_gazebo_ros_control)">
 	  <gazebo>
-    <plugin name="asinus_joint_state" filename="ignition-gazebo-joint-state-publisher-system">
+    <plugin name="ignition::gazebo::systems::JointStatePublisher" filename="ignition-gazebo-joint-state-publisher-system">
       <ros>
         <namespace>${robot_namespace}</namespace>  
         <remapping>~/out:=joint_states</remapping>
@@ -77,11 +186,9 @@
       <joint_name>right2_motor_hub_joint</joint_name>
       <joint_name>left1_motor_hub_joint</joint_name>
       <joint_name>left2_motor_hub_joint</joint_name>
-      <joint_name>caster_rotation_joint</joint_name>
-      <joint_name>caster_wheel_joint</joint_name>
     </plugin>
 
-    <plugin name='asinus_diff_drive' filename='ignition-gazebo-diff-drive-system'>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
       <ros>
         <namespace>${robot_namespace}</namespace>  
         <remapping>/odom:=odom</remapping>
@@ -91,7 +198,8 @@
       <!-- wheels -->
       <left_joint>left1_motor_hub_joint</left_joint>
       <right_joint>right1_motor_hub_joint</right_joint>
-
+      <left2_joint>left2_motor_hub_joint</left2_joint>
+      <right2_joint>right2_motor_hub_joint</right2_joint>
       <!-- kinematics -->
       <wheel_separation>0.567</wheel_separation>
       <wheel_radius>0.079</wheel_radius>
@@ -106,9 +214,22 @@
       <odometry_frame>odom</odometry_frame>
       <robot_base_frame>base_link</robot_base_frame>
     </plugin>
-	  </gazebo>
+	  
+
+    <plugin  filename="gz-sim-sensors-system"  name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    
+    <plugin  filename="gz-sim-imu-system"  name="gz::sim::systems::Imu">
+    </plugin>
+    
+    </gazebo>
   </xacro:unless>
 
   <xacro:include filename="$(find asinus_gz)/urdf/include/asinus_materials.xacro"/>
+  
+  <!-- Kinect Sensor -->
+  <xacro:sensor_kinect parent="base_link" namespace="$(arg namespace)"/>
 
 </robot>
