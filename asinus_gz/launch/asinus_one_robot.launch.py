@@ -51,11 +51,14 @@ def generate_launch_description():
     }
     
     # Set up environment variables for Gazebo resource paths
+    models_path = os.path.join(pkg_asinus_gz, 'worlds')
+
     gz_resource_path = ':'.join([
         os.path.join(pkg_asinus_description, '..'),
         os.path.join(pkg_asinus_gz, '..'),
         asinus_model_path,
         asinus_mesh_path,
+        models_path,
         '/opt/ros/humble/share'
     ])
     
@@ -84,7 +87,8 @@ def generate_launch_description():
         executable='create',
         output='screen',
         arguments=['-topic', 'robot_description', '-name',
-                   'diff_drive', '-allow_renaming', 'true'],
+                   'diff_drive', '-allow_renaming', 'true',
+                   '-z', '2.0'],
     )
 
     joint_state_broadcaster_spawner = Node(
@@ -102,6 +106,7 @@ def generate_launch_description():
             ],
     )
 
+
     # Bridge for clock and camera topics
     bridge_params = PathJoinSubstitution([
         FindPackageShare("asinus_gz"),
@@ -118,6 +123,16 @@ def generate_launch_description():
         output='screen',
     )
 
+    depthimage_to_pointcloud2 = Node(
+        package='depth_image_proc',
+        executable='point_cloud_xyz_node',
+        name='point_cloud_xyz_node',
+        remappings=[
+            ('image_rect', '/kinect_depth/image_raw'),
+            ('camera_info', '/kinect_depth/camera_info'),
+        ]
+    )
+    
     return LaunchDescription([
         DeclareLaunchArgument(
             'use_sim_time',
@@ -125,7 +140,7 @@ def generate_launch_description():
             description='If true, use simulated clock'),
         DeclareLaunchArgument(
             'world_file',
-            default_value='worlds/empty.sdf',
+            default_value='worlds/campo.sdf',
             description='World file to load in Gazebo'),
         # Launch gazebo environment
         IncludeLaunchDescription(
@@ -147,6 +162,7 @@ def generate_launch_description():
             )
         ),
         bridge,
+        depthimage_to_pointcloud2,
         node_robot_state_publisher,
         gz_spawn_entity,
     ])

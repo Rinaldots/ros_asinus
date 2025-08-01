@@ -16,6 +16,8 @@
   <xacro:include filename="$(find ${package_name})/urdf/include/ros2_control_macro.urdf.xacro" />
   <xacro:include filename="$(find ${package_name})/urdf/include/sensors/kinect.urdf.xacro" />
   <xacro:include filename="$(find ${package_name})/urdf/include/sensors/gps.urdf.xacro" />
+  <xacro:include filename="$(find ${package_name})/urdf/include/sensors/imu.urdf.xacro" />
+  <xacro:include filename="$(find ${package_name})/urdf/include/sensors/lidar.urdf.xacro" />
   <xacro:arg name="yaml_config_dir" default="$(find ${package_name})/config/${robot_name}" />
 
   <xacro:property name="caster_wheel_yaml" value="$(arg yaml_config_dir)/caster_wheel.yaml" />
@@ -114,15 +116,7 @@
   <joint name="odom_joint" type="fixed">
     <parent link="base_link"/>
     <child link="odom_link"/>
-    <origin xyz="0 0 0" rpy="0 0 3.1416"/>
-  </joint>
-
-  <!-- MPU link -->
-  <link name="mpu_link"/>
-  <joint name="mpu_joint" type="fixed">
-    <parent link="base_link"/>
-    <child link="mpu_link"/>
-    <origin xyz="-0.033 -0.010 0.02" rpy="3.1416 0 0"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
 
    <xacro:if value="$(arg use_gazebo_ros_control)">
@@ -132,32 +126,32 @@
     </hardware>
     <joint name="left1_motor_hub_joint">
       <command_interface name="velocity">
-        <param name="min">-1</param>
-        <param name="max">1</param>
+        <param name="min">-3</param>
+        <param name="max">3</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="left2_motor_hub_joint">
       <command_interface name="velocity">
-        <param name="min">-1</param>
-        <param name="max">1</param>
+        <param name="min">-3</param>
+        <param name="max">3</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="right1_motor_hub_joint">
       <command_interface name="velocity">
-        <param name="min">-1</param>
-        <param name="max">1</param>
+        <param name="min">-3</param>
+        <param name="max">3</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="right2_motor_hub_joint">
       <command_interface name="velocity">
-        <param name="min">-1</param>
-        <param name="max">1</param>
+        <param name="min">-3</param>
+        <param name="max">3</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
@@ -205,4 +199,9 @@
   <!-- GPS Sensor -->
   <xacro:sensor_gps parent="base_link" namespace="$(arg namespace)"/>
 
+  <!-- IMU Sensor -->
+  <xacro:sensor_imu parent="base_link" namespace="$(arg namespace)"/>
+  
+  <xacro:sensor_lidar parent="base_link" namespace="$(arg namespace)"/>
+  
 </robot>

@@ -1,5 +1,12 @@
 <?xml version="1.0" ?>
-
+<!--
+  Example p        <engine>ogre2</engine>
+        <scene>scene</scene>
+        <ambient_light>0.4 0.4 0.4</ambient_light>
+        <background_color>0.8 0.8 0.8</background_color>
+        <camera_pose>-80 0 60 0 1.0 0</camera_pose>hing point cloud messages to ROS from Gazebo.
+  There are 2 RGBD cameras: one with custom plugin parameters and another one with default parameters.
+-->
 <sdf version="1.9">
   <world name="ros_gz">
     <physics name="1ms" type="ode">
@@ -124,7 +131,7 @@
             <line own="bottom" target="bottom"/>
           </anchors>
         </ignition-gui>
-        <topic>rgbd_camera/depth_image</topic>
+        <topic>kinect_depth/image</topic>
         <topic_picker>false</topic_picker>
       </plugin>
 
@@ -139,7 +146,7 @@
             <line own="bottom" target="bottom"/>
           </anchors>
         </ignition-gui>
-        <topic>rgbd_camera/image</topic>
+        <topic>kinect_rgb/image</topic>
         <topic_picker>false</topic_picker>
       </plugin>
     </gui>
@@ -496,12 +503,487 @@
         </visual>
       </link>
     </model>
-
-    <include>
-      <uri>
-      https://fuel.gazebosim.org/1.0/Sirius/models/baylands
-      </uri>
-    </include>
-
+    <!-- Objetos sortidos -->
+    <model name="cone_2">
+      <pose>15 20 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+        <geometry>
+        <cylinder>
+          <radius>0.1</radius>
+          <length>0.5</length>
+        </cylinder>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+        <cylinder>
+          <radius>0.1</radius>
+          <length>0.5</length>
+        </cylinder>
+        </geometry>
+        <material>
+        <ambient>1 0 0 1</ambient>
+        <diffuse>1 0 0 1</diffuse>
+        </material>
+      </visual>
+      </link>
+    </model>
+    <model name="box_2">
+      <pose>-18 25 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+        <geometry>
+        <box>
+          <size>0.5 0.5 0.5</size>
+        </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+        <box>
+          <size>0.5 0.5 0.5</size>
+        </box>
+        </geometry>
+        <material>
+        <ambient>0 1 0 1</ambient>
+        <diffuse>0 1 0 1</diffuse>
+        </material>
+      </visual>
+      </link>
+    </model>
+    <model name="cylinder_2">
+      <pose>30 -15 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+        <geometry>
+        <cylinder>
+          <radius>0.25</radius>
+          <length>0.5</length>
+        </cylinder>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+        <cylinder>
+          <radius>0.25</radius>
+          <length>0.5</length>
+        </cylinder>
+        </geometry>
+        <material>
+        <ambient>0 0 1 1</ambient>
+        <diffuse>0 0 1 1</diffuse>
+        </material>
+      </visual>
+      </link>
+    </model>
+    <model name="sphere_2">
+      <pose>-25 -20 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+        <geometry>
+        <sphere>
+          <radius>0.25</radius>
+        </sphere>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+        <sphere>
+          <radius>0.25</radius>
+        </sphere>
+        </geometry>
+        <material>
+        <ambient>1 1 0 1</ambient>
+        <diffuse>1 1 0 1</diffuse>
+        </material>
+      </visual>
+      </link>
+    </model>
+    <model name="cone_3">
+      <pose>40 10 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+        <geometry>
+        <cylinder>
+          <radius>0.1</radius>
+          <length>0.5</length>
+        </cylinder>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+        <cylinder>
+          <radius>0.1</radius>
+          <length>0.5</length>
+        </cylinder>
+        </geometry>
+        <material>
+        <ambient>1 0 0 1</ambient>
+        <diffuse>1 0 0 1</diffuse>
+        </material>
+      </visual>
+      </link>
+    </model>
+    <model name="box_3">
+      <pose>-35 30 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+        <geometry>
+        <box>
+          <size>0.5 0.5 0.5</size>
+        </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+        <box>
+          <size>0.5 0.5 0.5</size>
+        </box>
+        </geometry>
+        <material>
+        <ambient>0 1 0 1</ambient>
+        <diffuse>0 1 0 1</diffuse>
+        </material>
+      </visual>
+      </link>
+    </model>
+    <model name="cylinder_3">
+      <pose>50 -30 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+        <geometry>
+        <cylinder>
+          <radius>0.25</radius>
+          <length>0.5</length>
+        </cylinder>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+        <cylinder>
+          <radius>0.25</radius>
+          <length>0.5</length>
+        </cylinder>
+        </geometry>
+        <material>
+        <ambient>0 0 1 1</ambient>
+        <diffuse>0 0 1 1</diffuse>
+        </material>
+      </visual>
+      </link>
+    </model>
+    <model name="sphere_3">
+      <pose>-40 -35 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+        <geometry>
+        <sphere>
+          <radius>0.25</radius>
+        </sphere>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+        <sphere>
+          <radius>0.25</radius>
+        </sphere>
+        </geometry>
+        <material>
+        <ambient>1 1 0 1</ambient>
+        <diffuse>1 1 0 1</diffuse>
+        </material>
+      </visual>
+      </link>
+    </model>
+    <model name="cone_4">
+      <pose>25 50 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+      <geometry>
+      <cylinder>
+        <radius>0.1</radius>
+        <length>0.5</length>
+      </cylinder>
+      </geometry>
+      </collision>
+      <visual name="visual">
+      <geometry>
+      <cylinder>
+        <radius>0.1</radius>
+        <length>0.5</length>
+      </cylinder>
+      </geometry>
+      <material>
+      <ambient>1 0 0 1</ambient>
+      <diffuse>1 0 0 1</diffuse>
+      </material>
+      </visual>
+      </link>
+    </model>
+    <model name="box_4">
+      <pose>-50 40 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+      <geometry>
+      <box>
+        <size>0.5 0.5 0.5</size>
+      </box>
+      </geometry>
+      </collision>
+      <visual name="visual">
+      <geometry>
+      <box>
+        <size>0.5 0.5 0.5</size>
+      </box>
+      </geometry>
+      <material>
+      <ambient>0 1 0 1</ambient>
+      <diffuse>0 1 0 1</diffuse>
+      </material>
+      </visual>
+      </link>
+    </model>
+    <model name="cylinder_4">
+      <pose>60 -45 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+      <geometry>
+      <cylinder>
+        <radius>0.25</radius>
+        <length>0.5</length>
+      </cylinder>
+      </geometry>
+      </collision>
+      <visual name="visual">
+      <geometry>
+      <cylinder>
+        <radius>0.25</radius>
+        <length>0.5</length>
+      </cylinder>
+      </geometry>
+      <material>
+      <ambient>0 0 1 1</ambient>
+      <diffuse>0 0 1 1</diffuse>
+      </material>
+      </visual>
+      </link>
+    </model>
+    <model name="sphere_4">
+      <pose>-55 -50 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+      <geometry>
+      <sphere>
+      <radius>0.25</radius>
+      </sphere>
+      </geometry>
+      </collision>
+      <visual name="visual">
+      <geometry>
+      <sphere>
+      <radius>0.25</radius>
+      </sphere>
+      </geometry>
+      <material>
+      <ambient>1 1 0 1</ambient>
+      <diffuse>1 1 0 1</diffuse>
+      </material>
+      </visual>
+      </link>
+    </model>
+    <!-- Objetos próximos da origem (2 a 10 metros) -->
+    <model name="cone_near_1">
+      <pose>2 0 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+        <geometry>
+        <cylinder>
+          <radius>0.1</radius>
+          <length>0.5</length>
+        </cylinder>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+        <cylinder>
+          <radius>0.1</radius>
+          <length>0.5</length>
+        </cylinder>
+        </geometry>
+        <material>
+        <ambient>1 0 0 1</ambient>
+        <diffuse>1 0 0 1</diffuse>
+        </material>
+      </visual>
+      </link>
+    </model>
+    <model name="box_near_1">
+      <pose>0 3 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+        <geometry>
+        <box>
+          <size>0.5 0.5 0.5</size>
+        </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+        <box>
+          <size>0.5 0.5 0.5</size>
+        </box>
+        </geometry>
+        <material>
+        <ambient>0 1 0 1</ambient>
+        <diffuse>0 1 0 1</diffuse>
+        </material>
+      </visual>
+      </link>
+    </model>
+    <model name="cylinder_near_1">
+      <pose>-4 4 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+        <geometry>
+        <cylinder>
+          <radius>0.25</radius>
+          <length>0.5</length>
+        </cylinder>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+        <cylinder>
+          <radius>0.25</radius>
+          <length>0.5</length>
+        </cylinder>
+        </geometry>
+        <material>
+        <ambient>0 0 1 1</ambient>
+        <diffuse>0 0 1 1</diffuse>
+        </material>
+      </visual>
+      </link>
+    </model>
+    <model name="sphere_near_1">
+      <pose>6 -2 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+        <geometry>
+        <sphere>
+          <radius>0.25</radius>
+        </sphere>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+        <sphere>
+          <radius>0.25</radius>
+        </sphere>
+        </geometry>
+        <material>
+        <ambient>1 1 0 1</ambient>
+        <diffuse>1 1 0 1</diffuse>
+        </material>
+      </visual>
+      </link>
+    </model>
+    <model name="cone_near_2">
+      <pose>8 8 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+        <geometry>
+        <cylinder>
+          <radius>0.1</radius>
+          <length>0.5</length>
+        </cylinder>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+        <cylinder>
+          <radius>0.1</radius>
+          <length>0.5</length>
+        </cylinder>
+        </geometry>
+        <material>
+        <ambient>1 0 0 1</ambient>
+        <diffuse>1 0 0 1</diffuse>
+        </material>
+      </visual>
+      </link>
+    </model>
+    <model name="box_near_2">
+      <pose>-10 5 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+        <geometry>
+        <box>
+          <size>0.5 0.5 0.5</size>
+        </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+        <box>
+          <size>0.5 0.5 0.5</size>
+        </box>
+        </geometry>
+        <material>
+        <ambient>0 1 0 1</ambient>
+        <diffuse>0 1 0 1</diffuse>
+        </material>
+      </visual>
+      </link>
+    </model>
+    <model name="cylinder_near_2">
+      <pose>10 -7 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+        <geometry>
+        <cylinder>
+          <radius>0.25</radius>
+          <length>0.5</length>
+        </cylinder>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+        <cylinder>
+          <radius>0.25</radius>
+          <length>0.5</length>
+        </cylinder>
+        </geometry>
+        <material>
+        <ambient>0 0 1 1</ambient>
+        <diffuse>0 0 1 1</diffuse>
+        </material>
+      </visual>
+      </link>
+    </model>
+    <model name="sphere_near_2">
+      <pose>-9 -10 0.25 0 0 0</pose>
+      <link name="link">
+      <collision name="collision">
+        <geometry>
+        <sphere>
+          <radius>0.25</radius>
+        </sphere>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+        <sphere>
+          <radius>0.25</radius>
+        </sphere>
+        </geometry>
+        <material>
+        <ambient>1 1 0 1</ambient>
+        <diffuse>1 1 0 1</diffuse>
+        </material>
+      </visual>
+      </link>
+    </model>
   </world>
 </sdf>
