@@ -27,7 +27,6 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
     # Launch Arguments
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
-    world_file = LaunchConfiguration('world_file', default='empty.world')
     pkg_asinus_description = FindPackageShare('asinus_description').find('asinus_description')
     pkg_asinus_gz = FindPackageShare('asinus_gz').find('asinus_gz')
     # Add the mesh/model path for asinus_description to the GAZEBO/GZ resource paths
@@ -126,7 +125,7 @@ def generate_launch_description():
             description='If true, use simulated clock'),
         DeclareLaunchArgument(
             'world_file',
-            default_value='empty.world',
+            default_value='worlds/empty.sdf',
             description='World file to load in Gazebo'),
         # Launch gazebo environment
         IncludeLaunchDescription(
@@ -134,7 +133,7 @@ def generate_launch_description():
                 [PathJoinSubstitution([FindPackageShare('ros_gz_sim'),
                                        'launch',
                                        'gz_sim.launch.py'])]),
-            launch_arguments=[('gz_args', [' -r -v 1 empty.sdf'])]),
+            launch_arguments=[('gz_args', [' -r -v 1 ', PathJoinSubstitution([pkg_asinus_gz, LaunchConfiguration('world_file')])])],),
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=gz_spawn_entity,

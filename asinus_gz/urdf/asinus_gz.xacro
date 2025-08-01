@@ -124,6 +124,14 @@
     <origin xyz="-0.033 -0.010 0.02" rpy="3.1416 0 0"/>
   </joint>
 
+  <!-- GPS link -->
+  <link name="gps_link"/>
+  <joint name="gps_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="gps_link"/>
+    <origin xyz="0 0 0.05" rpy="0 0 0"/>
+  </joint>
+
    <xacro:if value="$(arg use_gazebo_ros_control)">
     <ros2_control name="GazeboSimSystem" type="system">
     <hardware>
@@ -165,64 +173,42 @@
 
   <gazebo>
     <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <ros>
-        <namespace>$(arg namespace)</namespace>
-      </ros>
       <parameters>$(find ros2_control_asinus)/config/diffbot_controllers.yaml</parameters>
     </plugin>
+    <!-- Linear Battery Plugin -->
+    <!-- TODO calibration -->
+    <plugin filename="gz-sim-linearbatteryplugin-system"
+            name="gz::sim::systems::LinearBatteryPlugin">
+          <battery_name>linear_battery</battery_name>
+          <voltage>24.00</voltage>
+          <open_circuit_voltage_constant_coef>24.00</open_circuit_voltage_constant_coef>
+          <capacity>105.5</capacity>
+          <power_load>700.0</power_load>
+          <fix_issue_225>true</fix_issue_225>
+          <enable_recharge>true</enable_recharge>
+          <charging_time>3.0</charging_time>
+          <recharge_by_topic>true</recharge_by_topic>
+    </plugin>
+    
+  </gazebo>
+
+  <!-- GPS Sensor -->
+  <gazebo reference="gps_link">
+    <sensor name="navsat" type="navsat">
+      <always_on>1</always_on>
+      <update_rate>1</update_rate>
+      <topic>navsat</topic>
+      <navsat>
+        <position_sensing>
+        </position_sensing>
+      </navsat>
+    </sensor>
   </gazebo>
   </xacro:if>
 
   <xacro:unless value="$(arg use_gazebo_ros_control)">
 	  <gazebo>
-    <plugin name="ignition::gazebo::systems::JointStatePublisher" filename="ignition-gazebo-joint-state-publisher-system">
-      <ros>
-        <namespace>${robot_namespace}</namespace>  
-        <remapping>~/out:=joint_states</remapping>
-        <remapping>/tf:=tf</remapping>
-      </ros>
-      <update_rate>30</update_rate>
-      <joint_name>right1_motor_hub_joint</joint_name>
-      <joint_name>right2_motor_hub_joint</joint_name>
-      <joint_name>left1_motor_hub_joint</joint_name>
-      <joint_name>left2_motor_hub_joint</joint_name>
-    </plugin>
-
-    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <ros>
-        <namespace>${robot_namespace}</namespace>  
-        <remapping>/odom:=odom</remapping>
-        <remapping>/tf:=tf</remapping>
-      </ros>
-
-      <!-- wheels -->
-      <left_joint>left1_motor_hub_joint</left_joint>
-      <right_joint>right1_motor_hub_joint</right_joint>
-      <left2_joint>left2_motor_hub_joint</left2_joint>
-      <right2_joint>right2_motor_hub_joint</right2_joint>
-      <!-- kinematics -->
-      <wheel_separation>0.567</wheel_separation>
-      <wheel_radius>0.079</wheel_radius>
-
-      <!-- limits -->
-      <max_wheel_torque>20</max_wheel_torque>
-      <max_wheel_acceleration>2</max_wheel_acceleration>
-
-      <!-- output -->
-      <publish_odom>true</publish_odom>
-      <publish_odom_tf>true</publish_odom_tf>
-      <odometry_frame>odom</odometry_frame>
-      <robot_base_frame>base_link</robot_base_frame>
-    </plugin>
-	  
-
-    <plugin  filename="gz-sim-sensors-system"  name="gz::sim::systems::Sensors">
-      <render_engine>ogre2</render_engine>
-    </plugin>
-
-    
-    <plugin  filename="gz-sim-imu-system"  name="gz::sim::systems::Imu">
-    </plugin>
+     
     
     </gazebo>
   </xacro:unless>

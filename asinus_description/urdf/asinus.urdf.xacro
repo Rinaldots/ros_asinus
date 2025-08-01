@@ -129,6 +129,14 @@
     <origin xyz="-0.033 -0.010 0.02" rpy="3.1416 0 0"/>
   </joint>
 
+  <!-- GPS link -->
+  <link name="gps_link"/>
+  <joint name="gps_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="gps_link"/>
+    <origin xyz="-0.033 -0.010 0.02" rpy="3.1416 0 0"/>
+  </joint>
+
   <!-- ROS2 Control -->
   <xacro:ros2_control_macro robot_prefix="" />
 
