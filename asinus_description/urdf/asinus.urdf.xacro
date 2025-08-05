@@ -38,15 +38,16 @@
   <xacro:property name="wheel_support_end_props" value="${xacro.load_yaml(wheel_support_end_yaml)}"/>
   <xacro:property name="wheel_support_end2_yaml" value="$(arg yaml_config_dir)/wheel_support_end2.yaml" />
   <xacro:property name="wheel_support_end2_props" value="${xacro.load_yaml(wheel_support_end2_yaml)}"/>
-  <!-- Footprint link -->
-  <xacro:footprint robot_prefix=""
-                   motor_hub_props="${motor_hub_props}" />
-
-  <!-- Base link -->
+  
+  <!-- Base link (must come before footprint) -->
   <xacro:base robot_prefix=""
               link_name="base_link" base_prop="${base_props}" mesh="${base_props['base']['mesh']}" >
     <origin xyz="0 0 0" rpy="0 0 ${-pi/2}" />
   </xacro:base>
+
+  <!-- Footprint link (after base_link is created) -->
+  <xacro:footprint robot_prefix=""
+                   motor_hub_props="${motor_hub_props}" />
 
 
   <!-- Caster Wheel -->
@@ -108,6 +109,9 @@
 
   <!-- Kinect Sensor -->
   <xacro:sensor_kinect parent="base_link" namespace="$(arg frame_prefix_arg)"/>
+
+  <!-- IMU Sensor -->
+  <xacro:sensor_imu parent="base_link" namespace="$(arg frame_prefix_arg)"/>
 
   <!-- Lidar Sensor - TODO: Implement lidar sensor macros -->
   <!-- <xacro:asinus_lidar namespace="$(arg frame_prefix_arg)"/>

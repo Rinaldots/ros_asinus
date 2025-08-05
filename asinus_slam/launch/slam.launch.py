@@ -39,7 +39,8 @@ def generate_launch_description():
         ('rgb/camera_info', '/kinect_rgb/camera_info'),
         ('depth/camera_info', '/kinect_depth/camera_info'),
         ('scan', '/scan'),
-        ('odom', '/odometry/filtered'),
+        ('odom', '/odom'),
+        ('gps/fix', '/navsat'),
     ]
     namespace = LaunchConfiguration('namespace', default='')
 
@@ -84,21 +85,8 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration('localization'))
     )
 
-    ekf_parameters = os.path.join(pkg_asinus_slam, 'config', 'ekf.yaml')
-    ekf_node = Node(
-        package='robot_localization',
-        executable='ekf_node',
-        name='ekf_filter_node',
-        output='screen',
-        parameters=[{
-            'use_sim_time': LaunchConfiguration('use_sim_time'),
-        }],
-        remappings=[
-            ('odometry/filtered', '/odometry/filtered'),
-            ('imu/data', '/imu/data'),
-        ],
-        condition=IfCondition(LaunchConfiguration('localization'))
-    )
+    
+        
 
 
     return LaunchDescription([

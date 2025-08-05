@@ -43,15 +43,15 @@
   <xacro:property name="wheel_support_end_props" value="${xacro.load_yaml(wheel_support_end_yaml)}"/>
   <xacro:property name="wheel_support_end2_yaml" value="$(arg yaml_config_dir)/wheel_support_end2.yaml" />
   <xacro:property name="wheel_support_end2_props" value="${xacro.load_yaml(wheel_support_end2_yaml)}"/>
-  <!-- Footprint link -->
-  <xacro:footprint robot_prefix=""
-                   motor_hub_props="${motor_hub_props}" />
-
+  
   <!-- Base link -->
   <xacro:base robot_prefix=""
               link_name="base_link" base_prop="${base_props}" mesh="${base_props['base']['mesh']}" >
     <origin xyz="0 0 0" rpy="0 0 ${-pi/2}" />
   </xacro:base>
+  <!-- Footprint link -->
+    <xacro:footprint robot_prefix=""
+                    motor_hub_props="${motor_hub_props}" />
 
 
   <!-- Caster Wheel -->
@@ -122,7 +122,7 @@
    <xacro:if value="$(arg use_gazebo_ros_control)">
     <ros2_control name="GazeboSimSystem" type="system">
     <hardware>
-      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+      <plugin>ign_ros2_control/IgnitionSystem</plugin>
     </hardware>
     <joint name="left1_motor_hub_joint">
       <command_interface name="velocity">

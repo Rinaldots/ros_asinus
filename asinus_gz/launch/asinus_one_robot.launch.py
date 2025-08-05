@@ -34,6 +34,8 @@ def generate_launch_description():
     asinus_model_path = pkg_asinus_description  # The package root may contain model.config etc.
 
     robot_name_for_config = "asinus"  # Assuming 'asinus' is the base name for config files
+    
+    namespace = LaunchConfiguration('namespace')
 
     robot_description_content = Command([
         'xacro ',
@@ -130,7 +132,15 @@ def generate_launch_description():
         remappings=[
             ('image_rect', '/kinect_depth/image_raw'),
             ('camera_info', '/kinect_depth/camera_info'),
-        ]
+        ],
+    )
+    ekf_parameters = os.path.join(pkg_asinus_description, 'config', 'ekf.yaml')
+    ekf_node = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        output='screen',
+        parameters=[ekf_parameters],
+        remappings=[("odometry/filtered", "/odom")],
     )
     
     return LaunchDescription([
@@ -142,6 +152,12 @@ def generate_launch_description():
             'world_file',
             default_value='worlds/campo.sdf',
             description='World file to load in Gazebo'),
+        DeclareLaunchArgument(
+            'namespace',
+            default_value='asinus',
+            description='Namespace'
+        ),
+        ekf_node,
         # Launch gazebo environment
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
@@ -165,4 +181,5 @@ def generate_launch_description():
         depthimage_to_pointcloud2,
         node_robot_state_publisher,
         gz_spawn_entity,
+        
     ])

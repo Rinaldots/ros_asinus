@@ -15,17 +15,8 @@
     # Subscription settings - Only enable sensors we actually have
     subscribe_rgbd: true
     subscribe_scan: true
-    subscribe_stereo: false
-    subscribe_rgb: false  
-    subscribe_depth: false
-    subscribe_odom_info: false
-    subscribe_user_data: false
-    subscribe_aruco: false
-    subscribe_landmarks: false
-    subscribe_target: false
-    subscribe_apriltag: false
-    subscribe_imu: false
-    subscribe_gps: false
+    subscribe_odom: true
+    subscribe_gps: true
 
     # Synchronization
     approx_sync: true
@@ -54,9 +45,10 @@
     # Registration strategy
     Reg/Strategy: "1"  # 0=Visual, 1=ICP, 2=Visual+ICP
     Reg/Force3DoF: "true"
+    Optimizer/Slam2D: "true"
 
     # Visual parameters
-    Vis/MinInliers: "12"
+    Vis/MinInliers: "5"
 
     # ICP parameters
     Icp/CorrespondenceRatio: "0.2"
