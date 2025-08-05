@@ -150,7 +150,7 @@ def generate_launch_description():
             description='If true, use simulated clock'),
         DeclareLaunchArgument(
             'world_file',
-            default_value='worlds/campo.sdf',
+            default_value='worlds/farm.sdf',
             description='World file to load in Gazebo'),
         DeclareLaunchArgument(
             'namespace',
