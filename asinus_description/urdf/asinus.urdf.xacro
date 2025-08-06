@@ -11,7 +11,8 @@
   <xacro:include filename="$(find ${package_name})/urdf/include/common_macros.urdf.xacro" />
   <xacro:include filename="$(find ${package_name})/urdf/include/asinus_caster_macro.urdf.xacro" />
   <xacro:include filename="$(find ${package_name})/urdf/include/ros2_control_macro.urdf.xacro" />
-
+  <xacro:include filename="$(find ${package_name})/urdf/include/sensors/kinect.urdf.xacro" />
+  <xacro:include filename="$(find ${package_name})/urdf/include/asinus_properties.urdf.xacro" />
   <xacro:arg name="yaml_config_dir" default="$(find ${package_name})/config/${robot_name}" />
 
   <xacro:property name="caster_wheel_yaml" value="$(arg yaml_config_dir)/caster_wheel.yaml" />
@@ -37,15 +38,16 @@
   <xacro:property name="wheel_support_end_props" value="${xacro.load_yaml(wheel_support_end_yaml)}"/>
   <xacro:property name="wheel_support_end2_yaml" value="$(arg yaml_config_dir)/wheel_support_end2.yaml" />
   <xacro:property name="wheel_support_end2_props" value="${xacro.load_yaml(wheel_support_end2_yaml)}"/>
-  <!-- Footprint link -->
-  <xacro:footprint robot_prefix=""
-                   motor_hub_props="${motor_hub_props}" />
-
-  <!-- Base link -->
+  
+  <!-- Base link (must come before footprint) -->
   <xacro:base robot_prefix=""
               link_name="base_link" base_prop="${base_props}" mesh="${base_props['base']['mesh']}" >
     <origin xyz="0 0 0" rpy="0 0 ${-pi/2}" />
   </xacro:base>
+
+  <!-- Footprint link (after base_link is created) -->
+  <xacro:footprint robot_prefix=""
+                   motor_hub_props="${motor_hub_props}" />
 
 
   <!-- Caster Wheel -->
@@ -105,13 +107,22 @@
                            wheel_support_end_props="${wheel_support_end2_props}" />
 
 
+  <!-- Kinect Sensor -->
+  <xacro:sensor_kinect parent="base_link" namespace="$(arg frame_prefix_arg)"/>
 
+  <!-- IMU Sensor -->
+  <xacro:sensor_imu parent="base_link" namespace="$(arg frame_prefix_arg)"/>
+
+  <!-- Lidar Sensor - TODO: Implement lidar sensor macros -->
+  <!-- <xacro:asinus_lidar namespace="$(arg frame_prefix_arg)"/>
+  <xacro:sensor_lidar parent="base_link"/> -->
+  
   <!-- Odometria link -->
   <link name="odom_link"/>
   <joint name="odom_joint" type="fixed">
     <parent link="base_link"/>
     <child link="odom_link"/>
-    <origin xyz="0 0 0" rpy="0 0 3.1416"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
 
   <!-- MPU link -->
@@ -119,6 +130,14 @@
   <joint name="mpu_joint" type="fixed">
     <parent link="base_link"/>
     <child link="mpu_link"/>
+    <origin xyz="-0.033 -0.010 0.02" rpy="3.1416 0 0"/>
+  </joint>
+
+  <!-- GPS link -->
+  <link name="gps_link"/>
+  <joint name="gps_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="gps_link"/>
     <origin xyz="-0.033 -0.010 0.02" rpy="3.1416 0 0"/>
   </joint>
 

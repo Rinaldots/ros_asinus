@@ -88,6 +88,7 @@ def generate_launch_description():
         DeclareLaunchArgument("gui", default_value="true", description="Start RViz automatically"),
         robot_state_pub_node,
         robot_controller_spawner,
+        control_node,
         rviz_node,
         delay_joint_state_broadcaster_after_robot_controller_spawner,
         

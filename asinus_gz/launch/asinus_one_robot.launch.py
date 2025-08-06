@@ -1,68 +1,42 @@
-"""Launch Gazebo with a world that has Asinus."""
+# Copyright 2022 Open Source Robotics Foundation, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-import os
-
-from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import (DeclareLaunchArgument, GroupAction,
-                            IncludeLaunchDescription, ExecuteProcess)
-from launch.conditions import IfCondition
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import RegisterEventHandler, ExecuteProcess
+from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
+import os
+from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    # Arguments
+    # Launch Arguments
+    use_sim_time = LaunchConfiguration('use_sim_time', default=True)
+    pkg_asinus_description = FindPackageShare('asinus_description').find('asinus_description')
+    pkg_asinus_gz = FindPackageShare('asinus_gz').find('asinus_gz')
+    # Add the mesh/model path for asinus_description to the GAZEBO/GZ resource paths
+    asinus_mesh_path = os.path.join(pkg_asinus_description, 'meshes')
+    asinus_model_path = pkg_asinus_description  # The package root may contain model.config etc.
+
+    robot_name_for_config = "asinus"  # Assuming 'asinus' is the base name for config files
+    
     namespace = LaunchConfiguration('namespace')
-    use_sim_time = LaunchConfiguration('use_sim_time')
-    use_rviz = LaunchConfiguration('rviz')
-    use_gazebo_ros_control = LaunchConfiguration('use_gazebo_ros_control')
-    world_file = LaunchConfiguration('world_file')
 
-    # Paths
-    pkg_asinus_gz = get_package_share_directory('asinus_gz')
-    pkg_asinus_description = get_package_share_directory('asinus_description')
-    
-    # Default world file
-    default_world_file = os.path.join(pkg_asinus_gz, 'worlds', 'empty.world')
-
-    # Launch arguments
-    namespace_arg = DeclareLaunchArgument(
-        'namespace',
-        default_value='asinus',
-        description='Robot namespace'
-    )
-    
-    use_sim_time_arg = DeclareLaunchArgument(
-        'use_sim_time',
-        default_value='true',
-        description='Use simulation time'
-    )
-    
-    use_rviz_arg = DeclareLaunchArgument(
-        'rviz',
-        default_value='true',
-        description='Launch RViz'
-    )
-    
-    use_gazebo_ros_control_arg = DeclareLaunchArgument(
-        'use_gazebo_ros_control',
-        default_value='true',
-        description='Use Gazebo ROS Control plugin'
-    )
-    
-    world_file_arg = DeclareLaunchArgument(
-        'world_file',
-        default_value=default_world_file,
-        description='World file to load'
-    )
-
-    # Description of the asinus - use direct xacro processing for Gazebo
-    from launch.substitutions import Command, PathJoinSubstitution
-    from launch_ros.substitutions import FindPackageShare
-    from launch_ros.parameter_descriptions import ParameterValue
-    
     robot_description_content = Command([
         'xacro ',
         PathJoinSubstitution([
@@ -70,87 +44,142 @@ def generate_launch_description():
             'urdf',
             'asinus_gz.xacro'
         ]),
-        ' namespace:=', namespace,
-        ' use_gazebo_ros_control:=', use_gazebo_ros_control
+        ' yaml_config_dir:=', os.path.join(pkg_asinus_description, 'config', robot_name_for_config), # Use a consistent name for config path
+    ])
+
+    params = {
+        'robot_description': ParameterValue(robot_description_content, value_type=str),
+        'prefix': "", # Set to empty string as link names in URDF will be prefixed
+    }
+    
+    # Set up environment variables for Gazebo resource paths
+    models_path = os.path.join(pkg_asinus_gz, 'worlds')
+
+    gz_resource_path = ':'.join([
+        os.path.join(pkg_asinus_description, '..'),
+        os.path.join(pkg_asinus_gz, '..'),
+        asinus_model_path,
+        asinus_mesh_path,
+        models_path,
+        '/opt/ros/humble/share'
     ])
     
-    robot_state_publisher = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        namespace=namespace,
-        parameters=[{
-            'robot_description': ParameterValue(robot_description_content, value_type=str),
-            'use_sim_time': use_sim_time
-        }],
-        output='screen'
-    )
+    # Set environment variables
+    os.environ['IGN_GAZEBO_RESOURCE_PATH'] = gz_resource_path
+    os.environ['GZ_SIM_RESOURCE_PATH'] = gz_resource_path
 
-    # Gazebo launch (Ignition Gazebo)
-    gazebo_launch = ExecuteProcess(
-        cmd=['ign', 'gazebo', '-r', '-v4', LaunchConfiguration('world_file')],
-        output='screen',
-        additional_env={
-            'IGN_GAZEBO_RESOURCE_PATH': ':'.join([
-                os.path.join(pkg_asinus_description, '..', '..'),  # Workspace share
-                '/opt/ros/humble/share'  # Path padrão do ROS
-            ])
-        }
+    # Robot state publisher
+    node_robot_state_publisher = Node(package='robot_state_publisher',
+                executable='robot_state_publisher',
+                output='screen',
+                parameters=[params],
     )
+    
+    robot_controllers = PathJoinSubstitution(
+            [
+                FindPackageShare("ros2_control_asinus"),
+                "config",
+                "diffbot_controllers.yaml",
+            ]
+        )
 
-    # Robot spawn
-    robot_spawn = Node(
+
+    gz_spawn_entity = Node(
         package='ros_gz_sim',
         executable='create',
-        arguments=[
-            '-topic', '/asinus/robot_description',
-            '-name', 'asinus_robot',
-            '-x', '0.0',
-            '-y', '0.0',
-            '-z', '0.05',
-            '-Y', '0.0'
-        ],
-        output='screen'
+        output='screen',
+        arguments=['-topic', 'robot_description', '-name',
+                   'diff_drive', '-allow_renaming', 'true',
+                   '-z', '2.0'],
     )
 
-    # Joint State Broadcaster Spawner
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',
         arguments=['joint_state_broadcaster'],
-        namespace=namespace,
-        output='screen'
     )
-
-    # Diff Drive Controller Spawner
-    diff_drive_spawner = Node(
+    diffbot_base_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['diffbot_base_controller'],
-        namespace=namespace,
-        output='screen'
-    )
-            
-
-    # RViz
-    rviz_node = Node(
-        condition=IfCondition(use_rviz),
-        package='rviz2',
-        executable='rviz2',
-        name='rviz2',
-        arguments=['-d', os.path.join(pkg_asinus_gz, 'rviz', 'asinus_gz.rviz')],
-        parameters=[{'use_sim_time': use_sim_time}]
+        arguments=[
+            'diffbot_base_controller',
+            '--param-file',
+            robot_controllers,
+            ],
     )
 
+
+    # Bridge for clock and camera topics
+    bridge_params = PathJoinSubstitution([
+        FindPackageShare("asinus_gz"),
+        'params',
+        'asinus_params.yaml']
+    )
+
+    bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        parameters=[{
+            'config_file': bridge_params,
+        }],
+        output='screen',
+    )
+
+    depthimage_to_pointcloud2 = Node(
+        package='depth_image_proc',
+        executable='point_cloud_xyz_node',
+        name='point_cloud_xyz_node',
+        remappings=[
+            ('image_rect', '/kinect_depth/image_raw'),
+            ('camera_info', '/kinect_depth/camera_info'),
+        ],
+    )
+    ekf_parameters = os.path.join(pkg_asinus_description, 'config', 'ekf.yaml')
+    ekf_node = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        output='screen',
+        parameters=[ekf_parameters],
+        remappings=[("odometry/filtered", "/odom")],
+    )
+    
     return LaunchDescription([
-        namespace_arg,
-        use_sim_time_arg,
-        use_rviz_arg,
-        use_gazebo_ros_control_arg,
-        world_file_arg,
-        robot_state_publisher,
-        gazebo_launch,
-        robot_spawn,
-        joint_state_broadcaster_spawner,
-        diff_drive_spawner,
-        rviz_node,
+        DeclareLaunchArgument(
+            'use_sim_time',
+            default_value=use_sim_time,
+            description='If true, use simulated clock'),
+        DeclareLaunchArgument(
+            'world_file',
+            default_value='worlds/farm.sdf',
+            description='World file to load in Gazebo'),
+        DeclareLaunchArgument(
+            'namespace',
+            default_value='asinus',
+            description='Namespace'
+        ),
+        ekf_node,
+        # Launch gazebo environment
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                [PathJoinSubstitution([FindPackageShare('ros_gz_sim'),
+                                       'launch',
+                                       'gz_sim.launch.py'])]),
+            launch_arguments=[('gz_args', [' -r -v 1 ', PathJoinSubstitution([pkg_asinus_gz, LaunchConfiguration('world_file')])])],),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=gz_spawn_entity,
+                on_exit=[joint_state_broadcaster_spawner],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=joint_state_broadcaster_spawner,
+                on_exit=[diffbot_base_controller_spawner],
+            )
+        ),
+        bridge,
+        depthimage_to_pointcloud2,
+        node_robot_state_publisher,
+        gz_spawn_entity,
+        
     ])

@@ -65,8 +65,18 @@ def generate_launch_description():
         arguments=["-d", rviz_config_file],
         condition=IfCondition(gui),
     )
+
+    ekf_parameters = os.path.join(pkg_asinus_description, 'config', 'ekf.yaml')
+    ekf_node = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        output='screen',
+        parameters=[ekf_parameters],
+        remappings=[("odometry/filtered", "asinus/odom")],
+    )
     return LaunchDescription([
         namespace_arg,
         rsp,
-        # jsp  # Commented out to prevent TF conflicts with motor hubs
+        joint_state_publisher_node,  # Commented out to prevent TF conflicts with motor hubs
+        ekf_node,
     ])
