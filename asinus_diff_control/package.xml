@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>asinus_diff_control</name>
+  <version>2.49.0</version>
+  <description>Controller for a differential-drive mobile base.</description>
+
+  <maintainer email="rinaldo.filho.095@ufrn.edu.br">Rinaldo Filho</maintainer>
+
+  <license>Apache License 2.0</license>
+
+  <url type="website">https://control.ros.org</url>
+  <url type="bugtracker">https://github.com/ros-controls/ros2_controllers/issues</url>
+  <url type="repository">https://github.com/ros-controls/ros2_controllers/</url>
+
+  <author email="rinaldo.filho.095@ufrn.edu.br">Rinaldo Filho</author>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>backward_ros</depend>
+  <depend>controller_interface</depend>
+  <depend>geometry_msgs</depend>
+  <depend>hardware_interface</depend>
+  <depend>nav_msgs</depend>
+  <depend>parameter_traits</depend>
+  <depend>pluginlib</depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>rcpputils</depend>
+  <depend>realtime_tools</depend>
+  <depend>tf2</depend>
+  <depend>tf2_msgs</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
