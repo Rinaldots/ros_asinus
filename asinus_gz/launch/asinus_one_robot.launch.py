@@ -140,7 +140,7 @@ def generate_launch_description():
         executable='ekf_node',
         output='screen',
         parameters=[ekf_parameters],
-        remappings=[("odometry/filtered", "/odom")],
+        remappings=[("odometry/filtered", "asinus/odom")],
     )
     
     return LaunchDescription([

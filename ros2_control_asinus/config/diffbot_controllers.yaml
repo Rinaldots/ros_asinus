@@ -27,7 +27,7 @@ diffbot_base_controller:
     twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
 
     cmd_vel_timeout: 0.5
-    enable_odom_tf: false # Let EKF publish the odom->base_link TF
+    enable_odom_tf: true # Let EKF publish the odom->base_link TF
 
     linear.x.has_velocity_limits: true
     linear.x.has_acceleration_limits: true

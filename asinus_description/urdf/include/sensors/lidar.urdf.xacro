@@ -19,7 +19,6 @@
           <gz_frame_id>lidar_link</gz_frame_id>
           <update_rate>10</update_rate>
           <enable_metrics>true</enable_metrics>
-          <gz_frame_id>lidar_link</gz_frame_id>
           <ray>
             <scan>
               <horizontal>

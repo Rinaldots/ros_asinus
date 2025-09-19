@@ -176,20 +176,10 @@
           <charging_time>3.0</charging_time>
           <recharge_by_topic>true</recharge_by_topic>
     </plugin>
-    
-    
+    <!-- IMU Sensor -->
+
   </gazebo>
-
-  <!-- GPS Sensor -->
-  
   </xacro:if>
-
-  <xacro:unless value="$(arg use_gazebo_ros_control)">
-	  <gazebo>
-     
-    
-    </gazebo>
-  </xacro:unless>
 
   <xacro:include filename="$(find asinus_gz)/urdf/include/asinus_materials.xacro"/>
   
